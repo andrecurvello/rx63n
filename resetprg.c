@@ -100,8 +100,8 @@ void PowerON_Reset_PC(void)
 //	srand((_UINT)1);					// Remove the comment when you use rand()
 //	_s1ptr=NULL;					// Remove the comment when you use strtok()
 		
-//	HardwareSetup();				// Use Hardware Setup
-    nop();
+	HardwareSetup();				// Use Hardware Setup
+	nop();
 
 //	_CALL_INIT();					// Remove the comment when you use global class object
 
