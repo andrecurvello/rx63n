@@ -1,0 +1,40 @@
+#include "iodefine.h"
+
+void initS12ADC(void);
+
+//RX63N内蔵の12ビットA/D変換器の初期設定関数本体
+void initS12ADC(void)
+{
+	//12ビットAD変換器のモジュールストップ状態を解除
+	SYSTEM.PRCR.WORD = 0xA502;
+	SYSTEM.MSTPCRA.BIT.MSTPA17 = 0;
+	SYSTEM.PRCR.WORD = 0xA500;//PMRレジスタを汎用入出力に
+	PORT4.PDR.BIT.B0 = 0;
+	PORT4.PDR.BIT.B1 = 0;
+	PORT4.PDR.BIT.B2 = 0;
+	PORT4.PMR.BIT.B0 = 0;
+	PORT4.PMR.BIT.B1 = 0;
+	PORT4.PMR.BIT.B2 = 0;
+	
+	MPC.PWPR.BYTE &= ~0x80;
+	MPC.PWPR.BYTE |= 0x40;
+	MPC.P40PFS.BIT.ASEL = 1;//アナログ端子に設定（ASELビットを1に）
+	MPC.P41PFS.BIT.ASEL = 1;
+	MPC.P42PFS.BIT.ASEL = 1;
+	//MPC.P40PFS.BYTE = 0x80;
+	MPC.PWPR.BYTE &= 0x40;
+	MPC.PWPR.BYTE |= ~0x80;
+	
+	S12AD.ADCSR.BIT.ADST = 0;//stop ADCコンバータ
+	S12AD.ADCSR.BYTE = 0x10;//ADコントロールレジスタの設定
+	
+	S12AD.ADANS0.WORD = 0x07;//AN000・AN001・AN002だけ可
+	//S12AD.ADANS1.WORD = 0x00;
+	
+	S12AD.ADCER.BIT.ADRFMT = 0;//右づめ
+	S12AD.ADCSR.BIT.ADCS = 1;
+	
+	ICU.IPR[102].BIT.IPR = 8;//優先
+	ICU.IR[102].BIT.IR = 0;//フラグOFF
+	ICU.IER[0x0C].BIT.IEN6 = 1;//割り込みON(コントローラ)
+}
