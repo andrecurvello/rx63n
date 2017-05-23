@@ -55,16 +55,20 @@ void Excep_FCU_FRDYI(void){ }
 void Excep_ICU_SWINT(void){ }
 
 // CMT0 CMI0
-void Excep_CMT0_CMI0(void){ }
+// Move to cmt.c
+// void Excep_CMT0_CMI0(void){ }
 
 // CMT1 CMI1
-void Excep_CMT1_CMI1(void){ }
+// Move to cmt.c
+// void Excep_CMT1_CMI1(void){ }
 
 // CMT2 CMI2
-void Excep_CMT2_CMI2(void){ }
+// Move to cmt.c
+// void Excep_CMT2_CMI2(void){ }
 
 // CMT3 CMI3
-void Excep_CMT3_CMI3(void){ }
+// Move to cmt.c
+// void Excep_CMT3_CMI3(void){ }
 
 // ETHER EINT
 void Excep_ETHER_EINT(void){ }
@@ -473,7 +477,8 @@ void Excep_TMR3_OVI3(void){ }
 void Excep_RIIC0_EEI0(void){ }
 
 // RIIC0 RXI0
-void Excep_RIIC0_RXI0(void){ }
+// Move to I2C.c
+// void Excep_RIIC0_RXI0(void){ }
 
 // RIIC0 TXI0
 void Excep_RIIC0_TXI0(void){ }
@@ -551,7 +556,8 @@ void Excep_PDC_PCFEI(void){ }
 void Excep_PDC_PCERI(void){ }
 
 // SCI0 RXI0
-void Excep_SCI0_RXI0(void){ }
+// Move to serial_communication.c
+// void Excep_SCI0_RXI0(void){ }
 
 // SCI0 TXI0
 void Excep_SCI0_TXI0(void){ }
@@ -560,7 +566,8 @@ void Excep_SCI0_TXI0(void){ }
 void Excep_SCI0_TEI0(void){ }
 
 // SCI1 RXI1
-void Excep_SCI1_RXI1(void){ }
+// Move to serial_communication.c
+// void Excep_SCI1_RXI1(void){ }
 
 // SCI1 TXI1
 void Excep_SCI1_TXI1(void){ }
@@ -605,7 +612,8 @@ void Excep_SCI5_TXI5(void){ }
 void Excep_SCI5_TEI5(void){ }
 
 // SCI6 RXI6
-void Excep_SCI6_RXI6(void){ }
+// Move to serial_communication.c
+// void Excep_SCI6_RXI6(void){ }
 
 // SCI6 TXI6
 void Excep_SCI6_TXI6(void){ }

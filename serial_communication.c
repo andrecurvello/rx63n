@@ -40,8 +40,7 @@ void runSCI0(void){
 	char str;
 	unsigned char Start_Message[] = "\n\rSCI Star\n\r";
 	
-	initIO();
-	initSCI();
+	initSCI0();
 	setpsw_i();
 	
 	while(Start_Message[i] != '\0'){

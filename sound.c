@@ -12,10 +12,10 @@ unsigned char nextRyzhmCntFlag = 0;
 
 unsigned char nextMusicIntervalFlag = 0;
 unsigned char sinNow  = 0;
-extern float volume;
-extern unsigned short musicFreq;
-extern unsigned char displayFlag;
-extern char currentMI[4];
+/*extern*/ float volume;
+/*extern*/ unsigned short musicFreq;
+/*extern*/ unsigned char displayFlag;
+/*extern*/ char currentMI[4];
 /* 256 c */
 unsigned char sounds[] = {
 	127,130,133,136,139,142,145,148,
