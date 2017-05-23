@@ -1,43 +1,20 @@
-/************************************************************************
-*
-* Device     : RX/RX600/RX63N,RX631
-*
-* File Name  : hwsetup.c
-*
-* Abstract   : Hardware Setup file.
-*
-* History    : 0.10  (2011-02-21)  [Hardware Manual Revision : 0.01]
-*
-* NOTE       : THIS IS A TYPICAL EXAMPLE.
-*
-* Copyright (C) 2011 Renesas Electronics Corporation.
-* and Renesas Solutions Corp.
-*
-************************************************************************/
-
 #include "iodefine.h"
-#ifdef __cplusplus
-extern "C" {
-#endif
 extern void HardwareSetup(void);
-#ifdef __cplusplus
-}
-#endif
 
 void HardwareSetup(void)
 {
 	int i;
 	
-	//ƒvƒƒeƒNƒg‰ğœ
+	//ãƒ—ãƒ­ãƒ†ã‚¯ãƒˆè§£é™¤
 	SYSTEM.PRCR.WORD = 0xA503;
-	//ƒNƒƒbƒN—p’[qİ’è
+	//ã‚¯ãƒ­ãƒƒã‚¯ç”¨ç«¯å­è¨­å®š
 	PORT3.PDR.BYTE = 0x00;
 	PORT3.PMR.BYTE = 0xC0;
-	//”­UŠíƒEƒFƒCƒgƒRƒ“ƒgƒ[ƒ‹
+	//ç™ºæŒ¯å™¨ã‚¦ã‚§ã‚¤ãƒˆã‚³ãƒ³ãƒˆãƒ­ãƒ¼ãƒ«
 	SYSTEM.MOSCWTCR.BYTE = 0x0E;
 	SYSTEM.SOSCWTCR.BYTE = 0x0E;
 	
-	//‹Ö~ó‘ÔŠm”F
+	//ç¦æ­¢çŠ¶æ…‹ç¢ºèª
 	while(SYSTEM.OPCCR.BIT.OPCMTSF == 1);
 	while(FLASH.FENTRYR.BIT.FENTRY0 == 1);
 	while(FLASH.FENTRYR.BIT.FENTRY1 == 1);
