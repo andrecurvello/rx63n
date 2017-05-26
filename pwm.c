@@ -24,11 +24,11 @@ void InitPWM(void){
 	SYSTEM.MSTPCRA.BIT.MSTPA9 = 0;
 	SYSTEM.PRCR.WORD = 0xA500;
 	
-	//MTU0
-	ICU.IPR[142].BIT.IPR = 10;
-	ICU.IR[142].BIT.IR = 0;
-	ICU.IER[0x11].BIT.IEN6 = 1;
-	ICU.IER[0x11].BIT.IEN7 = 1;
+	//MTU1
+	ICU.IPR[148].BIT.IPR = 10;
+	ICU.IR[148].BIT.IR = 0;
+	ICU.IER[0x12].BIT.IEN4 = 1;
+	ICU.IER[0x12].BIT.IEN5 = 1;
 	
 	//MTU3	
 	ICU.IPR[152].BIT.IPR = 10;
@@ -37,10 +37,10 @@ void InitPWM(void){
 	ICU.IER[0x13].BIT.IEN1 = 1;// MTU3 TGIB3
 	
 	//TGRA カウンタクロックの選択
-	//MTIOC0A
-	MTU0.TCR.BYTE = 0x28;//AのコンペアマッチでTCNT=0, 立下りエッジでカウント
-	MTU0.TMDR.BYTE = 0x02;//PWMモード１
-	MTU0.TIORH.BYTE = 0x16;//A-high, B-low
+	//MTIOC1A
+	MTU1.TCR.BYTE = 0x28;//AのコンペアマッチでTCNT=0, 立下りエッジでカウント
+	MTU1.TMDR.BYTE = 0x02;//PWMモード１
+	MTU1.TIOR.BYTE = 0x16;//A-high, B-low
 	
 	MTU3.TCR.BYTE = 0x28;//TGRAのコンペアマッチ・インプットキャプチャでTCNTクリア + 立ち下がりエッジでカウント
 	MTU3.TMDR.BYTE = 0x02;//PWMモード１
@@ -48,13 +48,13 @@ void InitPWM(void){
 	MTU3.TIER.BYTE = 0x01;//TGRA割り込みを許可
 	
 	MTU.TRWER.BIT.RWE = 0x1;//プロテクト解除
-	MTU0.TGRA = 1000;//HIGH
-	MTU0.TGRB = 100;//LOW
+	MTU1.TGRA = 1000;//HIGH
+	MTU1.TGRB = 100;//LOW
 	MTU3.TGRA = 48000;//コンペアマッチでHIGH
 	MTU3.TGRB = 24000;//コンペアマッチでLOW
 	MTU.TRWER.BIT.RWE = 0x0;//プロテクト設定
 	
-	MTU.TSTR.BIT.CST0 = 1;//MTU0-TCNTカウンタ開始
+	MTU.TSTR.BIT.CST1 = 1;//MTU0-TCNTカウンタ開始
 	MTU.TSTR.BIT.CST3 = 1;//MTU3-TCNTカウンタの開始
 }
 
