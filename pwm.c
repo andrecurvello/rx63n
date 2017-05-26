@@ -1,18 +1,22 @@
 #include "iodefine.h"
 
 /*
- * ƒ}ƒ‹ƒ`ƒtƒ@ƒ“ƒNƒVƒ‡ƒ“ƒ^ƒCƒ}ƒpƒ‹ƒXƒ†ƒjƒbƒg‚Å‚ÌPWMo—Í
+ * ãƒžãƒ«ãƒãƒ•ã‚¡ãƒ³ã‚¯ã‚·ãƒ§ãƒ³ã‚¿ã‚¤ãƒžãƒ‘ãƒ«ã‚¹ãƒ¦ãƒ‹ãƒƒãƒˆã§ã®PWMå‡ºåŠ›
  */
 void InitPWM(void){
 	PORT1.PDR.BIT.B7 = 1;
 	PORT1.PMR.BIT.B7 = 1;
+	PORT2.PDR.BIT.B0 = 1;
+	PORT2.PMR.BIT.B0 = 1;
 	
 	/*
-	 * MTIOC3A
+	 * MTIOC3A(P17)
+	 * MTIOC1A(P20)
 	 */
 	MPC.PWPR.BIT.B0WI = 0;
 	MPC.PWPR.BIT.PFSWE = 1;
 	MPC.P17PFS.BIT.PSEL = 0x1;
+	MPC.P20PFS.BIT.PSEL = 0x1;
 	MPC.PWPR.BIT.PFSWE = 0;
 	MPC.PWPR.BIT.B0WI = 1;
 	
@@ -20,59 +24,70 @@ void InitPWM(void){
 	SYSTEM.MSTPCRA.BIT.MSTPA9 = 0;
 	SYSTEM.PRCR.WORD = 0xA500;
 	
+	//MTU0
+	ICU.IPR[142].BIT.IPR = 10;
+	ICU.IR[142].BIT.IR = 0;
+	ICU.IER[0x11].BIT.IEN6 = 1;
+	ICU.IER[0x11].BIT.IEN7 = 1;
+	
+	//MTU3	
 	ICU.IPR[152].BIT.IPR = 10;
 	ICU.IR[152].BIT.IR = 0;
 	ICU.IER[0x13].BIT.IEN0 = 1;// MTU3 TGIA3
 	ICU.IER[0x13].BIT.IEN1 = 1;// MTU3 TGIB3
 	
-	//TGRA ƒJƒEƒ“ƒ^ƒNƒƒbƒN‚Ì‘I‘ð
-	MTU3.TCR.BYTE = 0x28;//TGRA‚ÌƒRƒ“ƒyƒAƒ}ƒbƒ`EƒCƒ“ƒvƒbƒgƒLƒƒƒvƒ`ƒƒ‚ÅTCNTƒNƒŠƒA + —§‚¿‰º‚ª‚èƒGƒbƒW‚ÅƒJƒEƒ“ƒg
-	MTU3.TMDR.BYTE = 0x02;//PWMƒ‚[ƒh‚P
-	MTU3.TIORH.BYTE = 0x37;//‰ŠúLOWƒRƒ“ƒyƒAƒ}ƒbƒ`‚ÅƒgƒOƒ‹(TRGB‚ÌÝ’è)@{@‰ŠúHighƒRƒ“ƒyƒ}ƒbƒ`‚ÅƒgƒOƒ‹iTRGA‚ÌÝ’è)
-	MTU3.TIER.BYTE = 0x01;//TGRAŠ„‚èž‚Ý‚ð‹–‰Â
+	//TGRA ã‚«ã‚¦ãƒ³ã‚¿ã‚¯ãƒ­ãƒƒã‚¯ã®é¸æŠž
+	MTU0.TCR.BYTE = 0x28;//Aã®ã‚³ãƒ³ãƒšã‚¢ãƒžãƒƒãƒã§TCNT=0, ç«‹ä¸‹ã‚Šã‚¨ãƒƒã‚¸ã§ã‚«ã‚¦ãƒ³ãƒˆ
+	MTU0.TMDR.BYTE = 0x02;
+	MTU0.
 	
-	MTU.TRWER.BIT.RWE = 0x1;//ƒvƒƒeƒNƒg‰ðœ
-	MTU3.TGRA = 48000;//ƒRƒ“ƒyƒAƒ}ƒbƒ`‚ÅƒgƒOƒ‹
-	MTU3.TGRB = 24000;//ƒRƒ“ƒyƒAƒ}ƒbƒ`‚ÅƒgƒOƒ‹
-	MTU.TRWER.BIT.RWE = 0x0;//ƒvƒƒeƒNƒgÝ’è
+	MTU3.TCR.BYTE = 0x28;//TGRAã®ã‚³ãƒ³ãƒšã‚¢ãƒžãƒƒãƒãƒ»ã‚¤ãƒ³ãƒ—ãƒƒãƒˆã‚­ãƒ£ãƒ—ãƒãƒ£ã§TCNTã‚¯ãƒªã‚¢ + ç«‹ã¡ä¸‹ãŒã‚Šã‚¨ãƒƒã‚¸ã§ã‚«ã‚¦ãƒ³ãƒˆ
+	MTU3.TMDR.BYTE = 0x02;//PWMãƒ¢ãƒ¼ãƒ‰ï¼‘
+	MTU3.TIORH.BYTE = 0x37;//åˆæœŸLOWã‚³ãƒ³ãƒšã‚¢ãƒžãƒƒãƒã§ãƒˆã‚°ãƒ«(TRGBã®è¨­å®š)ã€€ï¼‹ã€€åˆæœŸHighã‚³ãƒ³ãƒšãƒžãƒƒãƒã§ãƒˆã‚°ãƒ«ï¼ˆTRGAã®è¨­å®š)
+	MTU3.TIER.BYTE = 0x01;//TGRAå‰²ã‚Šè¾¼ã¿ã‚’è¨±å¯
 	
-	MTU.TSTR.BIT.CST3 = 1;//TCNTƒJƒEƒ“ƒ^‚ÌŠJŽn
+	MTU.TRWER.BIT.RWE = 0x1;//ãƒ—ãƒ­ãƒ†ã‚¯ãƒˆè§£é™¤
+	MTU3.TGRA = 48000;//ã‚³ãƒ³ãƒšã‚¢ãƒžãƒƒãƒã§ãƒˆã‚°ãƒ«
+	MTU3.TGRB = 24000;//ã‚³ãƒ³ãƒšã‚¢ãƒžãƒƒãƒã§ãƒˆã‚°ãƒ«
+	MTU.TRWER.BIT.RWE = 0x0;//ãƒ—ãƒ­ãƒ†ã‚¯ãƒˆè¨­å®š
+	
+	MTU.TSTR.BIT.CST3 = 1;//TCNTã‚«ã‚¦ãƒ³ã‚¿ã®é–‹å§‹
 }
 
-/* ƒƒ‚i‚±‚±‚©‚çj
+/* ãƒ¡ãƒ¢ï¼ˆã“ã“ã‹ã‚‰ï¼‰
 
-PWMƒ‚[ƒh1iÅ‘å8‘Š‚ÌPWMo—Íj
-TGRA‚ÆTGRBATGRC‚ÆTGRD‚ðƒyƒA‚ÅŽg—pB‚»‚ê‚¼‚êAMTIOCnAAMTIOCnC’[Žq‚©‚çPWMo—Í‚ð¶¬‚·‚éB
-œ@TGRA,C‚ÌƒRƒ“ƒyƒAƒ}ƒbƒ` -> TIOR‚ÌIOAAIOCƒrƒbƒg‚ÅŽw’è‚µ‚½o—Í
-œ@TGRB,D‚ÌƒRƒ“ƒyƒAƒ}ƒbƒ` -> TIOR‚ÌIOBAIODƒrƒbƒg‚ÅŽw’è‚µ‚½o—Í
+PWMãƒ¢ãƒ¼ãƒ‰1ï¼ˆæœ€å¤§8ç›¸ã®PWMå‡ºåŠ›ï¼‰
+TGRAã¨TGRBã€TGRCã¨TGRDã‚’ãƒšã‚¢ã§ä½¿ç”¨ã€‚ãã‚Œãžã‚Œã€MTIOCnAã€MTIOCnCç«¯å­ã‹ã‚‰PWMå‡ºåŠ›ã‚’ç”Ÿæˆã™ã‚‹ã€‚
+â—ã€€TGRA,Cã®ã‚³ãƒ³ãƒšã‚¢ãƒžãƒƒãƒ -> TIORã®IOAã€IOCãƒ“ãƒƒãƒˆã§æŒ‡å®šã—ãŸå‡ºåŠ›
+â—ã€€TGRB,Dã®ã‚³ãƒ³ãƒšã‚¢ãƒžãƒƒãƒ -> TIORã®IOBã€IODãƒ“ãƒƒãƒˆã§æŒ‡å®šã—ãŸå‡ºåŠ›
 
-MTIOC0A - Žg—pƒŒƒWƒXƒ^ - MTU0.TGRA + MTU0.TRGB - 
-MTIOC0C - Žg—pƒŒƒWƒXƒ^ - MTU0.TGRC + MTU0.TGRD - P32
-MTIOC1A - Žg—pƒŒƒWƒXƒ^ - MTU1.TGRA + MTU1.TRGB - P20
-MTIOC2A - Žg—pƒŒƒWƒXƒ^ - MTU2.TGRA + MTU2.TGRB - P26
-MTIOC3A - Žg—pƒŒƒWƒXƒ^ - MTU3.TGRA + MTU3.TRGB - P14*P17
-MTIOC3C - Žg—pƒŒƒWƒXƒ^ - MTU3.TGRC + MTU3.TGRD - P16
-MTIOC4A - Žg—pƒŒƒWƒXƒ^ - MTU4.TGRA + MTU4.TRGB - 
-MTIOC4C - Žg—pƒŒƒWƒXƒ^ - MTU4.TGRC + MTU4.TGRD - 
+MTIOC0A - ä½¿ç”¨ãƒ¬ã‚¸ã‚¹ã‚¿ - MTU0.TGRA + MTU0.TRGB - 
+MTIOC0C - ä½¿ç”¨ãƒ¬ã‚¸ã‚¹ã‚¿ - MTU0.TGRC + MTU0.TGRD - P32
+MTIOC1A - ä½¿ç”¨ãƒ¬ã‚¸ã‚¹ã‚¿ - MTU1.TGRA + MTU1.TRGB - P20
+MTIOC2A - ä½¿ç”¨ãƒ¬ã‚¸ã‚¹ã‚¿ - MTU2.TGRA + MTU2.TGRB - P26
+MTIOC3A - ä½¿ç”¨ãƒ¬ã‚¸ã‚¹ã‚¿ - MTU3.TGRA + MTU3.TRGB - P14*P17
+MTIOC3C - ä½¿ç”¨ãƒ¬ã‚¸ã‚¹ã‚¿ - MTU3.TGRC + MTU3.TGRD - P16
+MTIOC4A - ä½¿ç”¨ãƒ¬ã‚¸ã‚¹ã‚¿ - MTU4.TGRA + MTU4.TRGB - 
+MTIOC4C - ä½¿ç”¨ãƒ¬ã‚¸ã‚¹ã‚¿ - MTU4.TGRC + MTU4.TGRD - 
 
-PWMƒ‚[ƒh‚Qi“¯Šú“®ì‚Æ•¹—p‚·‚é‚±‚Æ‚É‚æ‚èÅ‘å8‘Š‚ÌPWMo—Íj
-œ“¯Šú“®ì‚ÍA•¡”‚ÌTCNT‚Ì’l‚ð“¯Žž‚É‘‚«Š·‚¦‚é‚±‚Æ‚ª‚Å‚«‚éB
-œTCR‚ÌÝ’è‚É‚æ‚è•¡”‚ÌTCNT‚ð“¯Žž‚ÉƒNƒŠƒA‚·‚é‚±‚Æ‚ª‚Å‚«‚éi“¯ŠúƒNƒŠƒAj
-œTGR‚Ì1–{‚ðŽüŠúƒŒƒWƒXƒ^A‘¼‚ÌTGR‚ðƒfƒ…[ƒeƒBƒŒƒWƒXƒ^‚ÉŽg—pB
+PWMãƒ¢ãƒ¼ãƒ‰ï¼’ï¼ˆåŒæœŸå‹•ä½œã¨ä½µç”¨ã™ã‚‹ã“ã¨ã«ã‚ˆã‚Šæœ€å¤§8ç›¸ã®PWMå‡ºåŠ›ï¼‰
+â—åŒæœŸå‹•ä½œã¯ã€è¤‡æ•°ã®TCNTã®å€¤ã‚’åŒæ™‚ã«æ›¸ãæ›ãˆã‚‹ã“ã¨ãŒã§ãã‚‹ã€‚
+â—TCRã®è¨­å®šã«ã‚ˆã‚Šè¤‡æ•°ã®TCNTã‚’åŒæ™‚ã«ã‚¯ãƒªã‚¢ã™ã‚‹ã“ã¨ãŒã§ãã‚‹ï¼ˆåŒæœŸã‚¯ãƒªã‚¢ï¼‰
+â—TGRã®1æœ¬ã‚’å‘¨æœŸãƒ¬ã‚¸ã‚¹ã‚¿ã€ä»–ã®TGRã‚’ãƒ‡ãƒ¥ãƒ¼ãƒ†ã‚£ãƒ¬ã‚¸ã‚¹ã‚¿ã«ä½¿ç”¨ã€‚
 
-MTIOC0A - Žg—pƒŒƒWƒXƒ^ - MTU0.TGRA
-MTIOC0B - Žg—pƒŒƒWƒXƒ^ - MTU0.TGRB
-MTIOC0C - Žg—pƒŒƒWƒXƒ^ - MTU0.TGRC
-MTIOC0D - Žg—pƒŒƒWƒXƒ^ - MTU0.TGRD
-MTIOC1A - Žg—pƒŒƒWƒXƒ^ - MTU1.TGRA
-MTIOC1B - Žg—pƒŒƒWƒXƒ^ - MTU1.TGRB
-MTIOC2A - Žg—pƒŒƒWƒXƒ^ - MTU2.TGRA
-MTIOC2B - Žg—pƒŒƒWƒXƒ^ - MTU2.TGRB
+MTIOC0A - ä½¿ç”¨ãƒ¬ã‚¸ã‚¹ã‚¿ - MTU0.TGRA
+MTIOC0B - ä½¿ç”¨ãƒ¬ã‚¸ã‚¹ã‚¿ - MTU0.TGRB
+MTIOC0C - ä½¿ç”¨ãƒ¬ã‚¸ã‚¹ã‚¿ - MTU0.TGRC
+MTIOC0D - ä½¿ç”¨ãƒ¬ã‚¸ã‚¹ã‚¿ - MTU0.TGRD
+MTIOC1A - ä½¿ç”¨ãƒ¬ã‚¸ã‚¹ã‚¿ - MTU1.TGRA
+MTIOC1B - ä½¿ç”¨ãƒ¬ã‚¸ã‚¹ã‚¿ - MTU1.TGRB
+MTIOC2A - ä½¿ç”¨ãƒ¬ã‚¸ã‚¹ã‚¿ - MTU2.TGRA
+MTIOC2B - ä½¿ç”¨ãƒ¬ã‚¸ã‚¹ã‚¿ - MTU2.TGRB
 
-œTCNTiƒ^ƒCƒ}ƒJƒEƒ“ƒ^j
-16ƒrƒbƒg‚Ì“Ç‚Ý‘‚«‰Â”\‚ÈƒJƒEƒ“ƒ^BƒŠƒZƒbƒg‚Å0000h‚É‰Šú‰»
+â—TCNTï¼ˆã‚¿ã‚¤ãƒžã‚«ã‚¦ãƒ³ã‚¿ï¼‰
+16ãƒ“ãƒƒãƒˆã®èª­ã¿æ›¸ãå¯èƒ½ãªã‚«ã‚¦ãƒ³ã‚¿ã€‚ãƒªã‚»ãƒƒãƒˆã§0000hã«åˆæœŸåŒ–
 
-œƒgƒOƒ‹o—Í
-0E1‚Ì“ü‚ê‘Ö‚¦
+â—ãƒˆã‚°ãƒ«å‡ºåŠ›
+0ãƒ»1ã®å…¥ã‚Œæ›¿ãˆ
 
-i‚±‚±‚Ü‚Åj*/
+ï¼ˆã“ã“ã¾ã§ï¼‰*/
