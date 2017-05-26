@@ -1,7 +1,7 @@
 /*
- * æ¦‚è¦
- * LEDç‚¹æ»… PORTA
- * ã‚½ãƒ•ãƒˆã‚¦ã‚§ã‚¢ã‚¿ã‚¤ãƒžã§ç‚¹æ»…
+ * ŠT—v
+ * LED“_–Å PORTA
+ * ƒ\ƒtƒgƒEƒFƒAƒ^ƒCƒ}‚Å“_–Å
  */
 
 #include "iodefine.h"
@@ -14,8 +14,8 @@ void RunLedOut(void);
 unsigned char led_data = 0xFF;
 
 void InitIO(){
-	PORTA.PDR.BYTE = 0xFF;//PORTAå‡ºåŠ›
-	PORTA.PODR.BYTE = 0xFF;//è² è«–ç†ã§æ¶ˆç¯
+	PORTA.PDR.BYTE = 0xFF;//PORTAo—Í
+	PORTA.PODR.BYTE = 0xFF;//•‰˜_—‚ÅÁ“”
 }
 
 void RunLedOut(){

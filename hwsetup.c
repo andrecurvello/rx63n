@@ -31,7 +31,7 @@ void HardwareSetup(void)
 	
 	for(i=0; i<600; i++);
 	
-	SYSTEM.SCKCR.LONG = 0x21021211;
+	SYSTEM.SCKCR.LONG = 0x21021611;
 	SYSTEM.SCKCR2.WORD = 0x0032;
 	SYSTEM.BCKCR.BYTE = 0x01;
 	
