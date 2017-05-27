@@ -107,19 +107,26 @@ void initMotorController(void){
 void runMotorController(void){
 	//MTU.TSTR.BIT.CST0 = 1;//MTU0-TCNTカウンタ開始
 	//MTU0.TGRA,MTU0.TGRCを変更で速度制御(最大はTGRBの設定値46875)
-	
 }
 
 void mcSetSpeed(unsigned short speed){
 	//TGRA, TGRCを設定
-	
+	if(0 <= speed && speed <= MOTORSPEEDMAX){
+		MTU.TSTR.BIT.CST0 = 0;
+		MTU.TRWER.BIT.RWE = 0x1;//プロテクト解除
+		MTU0.TGRA = MTU0.TGRC = (MOTORSPEEDMAX - motorSpeed) * MAXTCNT + 1;
+		MTU.TRWER.BIT.RWE = 0x0;//プロテクト設定
+		MTU.TSTR.BIT.CST0 = 1;
+	}
 }
 
 void mcSpeedUp(void){
 	if(motorSpeed < MOTORSPEEDMAX){
 		motorSpeed++;
 		MTU.TSTR.BIT.CST0 = 0;
+		MTU.TRWER.BIT.RWE = 0x1;//プロテクト解除
 		MTU0.TGRA = MTU0.TGRC = (MOTORSPEEDMAX - motorSpeed) * MAXTCNT + 1;
+		MTU.TRWER.BIT.RWE = 0x0;//プロテクト設定
 		MTU.TSTR.BIT.CST0 = 1;
 	}
 }
