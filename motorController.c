@@ -2,6 +2,9 @@
  * 概要
  * モーター制御
  * 電流方向による回転方向の制御とPWMによる回転数の制御
+ * 使用ポートP44・P45・P46・P47（回転方向）
+ * 同上    PB1・PB3（回転数）
+ * 動作未確認
  */
 
 #include "iodefine.h"
@@ -17,6 +20,13 @@
 
 void initMotorController(void);
 void runMotorController(void);
+void mcSetSpeed(unsigned short);
+void mcSpeedUp(void);
+void mcSpeedDown(void);
+void mcGoStraight(void);
+void mcGoToBack(void);
+void mcTurnRight(void);
+void mcTrunLeft(void);
 
 //global value
 unsigned char motorSpeed;//モーターの回転速度の段階数
@@ -104,11 +114,13 @@ void initMotorController(void){
 	//8:GND（設定なし）
 }
 
+//
 void runMotorController(void){
 	//MTU.TSTR.BIT.CST0 = 1;//MTU0-TCNTカウンタ開始
 	//MTU0.TGRA,MTU0.TGRCを変更で速度制御(最大はTGRBの設定値46875)
 }
 
+//速度設定
 void mcSetSpeed(unsigned short speed){
 	//TGRA, TGRCを設定
 	if(0 <= speed && speed <= MOTORSPEEDMAX){
@@ -120,6 +132,7 @@ void mcSetSpeed(unsigned short speed){
 	}
 }
 
+//速度上昇
 void mcSpeedUp(void){
 	if(motorSpeed < MOTORSPEEDMAX){
 		motorSpeed++;
@@ -131,6 +144,7 @@ void mcSpeedUp(void){
 	}
 }
 
+//速度低下
 void mcSpeedDown(void){
 	if(0 < motorSpeed){
 		motorSpeed--;
@@ -140,6 +154,7 @@ void mcSpeedDown(void){
 	}
 }
 
+//順送
 void mcGoStraight(void){
 	//
 	PORT4.PODR.BIT.B4 = 1;
@@ -148,13 +163,15 @@ void mcGoStraight(void){
 	PORT4.PODR.BIT.B7 = 1;
 }
 
-void mcGoBack(void){
+//逆走
+void mcGoToBack(void){
 	PORT4.PODR.BIT.B4 = 0;
 	PORT4.PODR.BIT.B5 = 1;
 	PORT4.PODR.BIT.B6 = 1;
 	PORT4.PODR.BIT.B7 = 0;
 }
 
+//右回転
 void mcTurnRight(void){
 	PORT4.PODR.BIT.B4 = 1;
 	PORT4.PODR.BIT.B5 = 0;
@@ -162,6 +179,7 @@ void mcTurnRight(void){
 	PORT4.PODR.BIT.B7 = 0;
 }
 
+//左回転
 void mcTurnLeft(void){
 	PORT4.PODR.BIT.B4 = 0;
 	PORT4.PODR.BIT.B5 = 1;
