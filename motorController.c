@@ -4,14 +4,14 @@
  * 電流方向による回転方向の制御とPWMによる回転数の制御
  * 使用ポートP44・P45・P46・P47（回転方向）
  * 同上    PB1・PB3（回転数）
- * 動作未確認
+ * 動作確認5/29
  */
 
 #include "iodefine.h"
 
 #ifndef FREQUENCY
 #define FREQUENCY 3000000//TGR(short型),PWM:64分周:46875count(1秒間)
-#define MAXTCNT 46875
+#define MAXTCNT 469
 #endif
 
 #ifndef MOTORSPEEDMAX
@@ -23,6 +23,7 @@ void runMotorController(void);
 void mcSetSpeed(unsigned short);
 void mcSpeedUp(void);
 void mcSpeedDown(void);
+void mcStop(void);
 void mcGoStraight(void);
 void mcGoToBack(void);
 void mcTurnRight(void);
@@ -122,11 +123,15 @@ void runMotorController(void){
 
 //速度設定
 void mcSetSpeed(unsigned short speed){
+	if(speed < 2){
+		mcStop();
+		return;
+	}
 	//TGRA, TGRCを設定
 	if(0 <= speed && speed <= MOTORSPEEDMAX){
 		MTU.TSTR.BIT.CST0 = 0;
 		MTU.TRWER.BIT.RWE = 0x1;//プロテクト解除
-		MTU0.TGRA = MTU0.TGRC = (MOTORSPEEDMAX - motorSpeed) * MAXTCNT + 1;
+		MTU0.TGRA = MTU0.TGRC = 0.1 * (MOTORSPEEDMAX - motorSpeed) * MAXTCNT + 1;
 		MTU.TRWER.BIT.RWE = 0x0;//プロテクト設定
 		MTU.TSTR.BIT.CST0 = 1;
 	}
@@ -138,7 +143,7 @@ void mcSpeedUp(void){
 		motorSpeed++;
 		MTU.TSTR.BIT.CST0 = 0;
 		MTU.TRWER.BIT.RWE = 0x1;//プロテクト解除
-		MTU0.TGRA = MTU0.TGRC = (MOTORSPEEDMAX - motorSpeed) * MAXTCNT + 1;
+		MTU0.TGRA = MTU0.TGRC = 0.1 * (MOTORSPEEDMAX - motorSpeed) * MAXTCNT + 1;
 		MTU.TRWER.BIT.RWE = 0x0;//プロテクト設定
 		MTU.TSTR.BIT.CST0 = 1;
 	}
@@ -149,40 +154,50 @@ void mcSpeedDown(void){
 	if(0 < motorSpeed){
 		motorSpeed--;
 		MTU.TSTR.BIT.CST0 = 0;
-		MTU0.TGRA = MTU0.TGRC = (MOTORSPEEDMAX - motorSpeed) * MAXTCNT + 1;
-		MTU.TSTR.BIT.CST0 = 1;
+		if(motorSpeed > 1){
+			MTU.TRWER.BIT.RWE = 0x1;
+			MTU0.TGRA = MTU0.TGRC = (MOTORSPEEDMAX - motorSpeed) * MAXTCNT + 1;
+			MTU.TRWER.BIT.RWE = 0x0;
+			MTU.TSTR.BIT.CST0 = 1;
+		}else{
+			mcStop();
+		}
 	}
+}
+
+void mcStop(void){
+	MTU.TSTR.BIT.CST0 = 0;
 }
 
 //順送
 void mcGoStraight(void){
 	//
-	PORT4.PODR.BIT.B4 = 1;
-	PORT4.PODR.BIT.B5 = 0;
+	PORT4.PODR.BIT.B4 = 0;
+	PORT4.PODR.BIT.B5 = 1;
 	PORT4.PODR.BIT.B6 = 0;
 	PORT4.PODR.BIT.B7 = 1;
 }
 
 //逆走
 void mcGoToBack(void){
-	PORT4.PODR.BIT.B4 = 0;
-	PORT4.PODR.BIT.B5 = 1;
-	PORT4.PODR.BIT.B6 = 1;
-	PORT4.PODR.BIT.B7 = 0;
-}
-
-//右回転
-void mcTurnRight(void){
 	PORT4.PODR.BIT.B4 = 1;
 	PORT4.PODR.BIT.B5 = 0;
 	PORT4.PODR.BIT.B6 = 1;
 	PORT4.PODR.BIT.B7 = 0;
 }
 
-//左回転
-void mcTurnLeft(void){
+//右回転
+void mcTurnRight(void){
 	PORT4.PODR.BIT.B4 = 0;
 	PORT4.PODR.BIT.B5 = 1;
+	PORT4.PODR.BIT.B6 = 1;
+	PORT4.PODR.BIT.B7 = 0;
+}
+
+//左回転
+void mcTurnLeft(void){
+	PORT4.PODR.BIT.B4 = 1;
+	PORT4.PODR.BIT.B5 = 0;
 	PORT4.PODR.BIT.B6 = 0;
 	PORT4.PODR.BIT.B7 = 1;
 }
