@@ -66,8 +66,8 @@ void initMotorController(void){
 	
 	MTU.TRWER.BIT.RWE = 0x1;//プロテクト解除
 	//90%
-	MTU0.TGRA = 1000;//コンペアマッチでHIGH(duty)
-	MTU0.TGRB = 46875;//コンペアマッチでLOW(cycle)
+	MTU0.TGRA = MAXTCNT;//コンペアマッチでHIGH(duty)
+	MTU0.TGRB = MAXTCNT;//コンペアマッチでLOW(cycle)
 	MTU.TRWER.BIT.RWE = 0x0;//プロテクト設定
 	
 	//MTU.TSTR.BIT.CST0 = 1;//MTU0-TCNTカウンタ開始
@@ -99,8 +99,8 @@ void initMotorController(void){
 	
 	MTU.TRWER.BIT.RWE = 0x1;//プロテクト解除
 	//90%
-	MTU0.TGRC = 1000;//コンペアマッチでHIGH(duty)
-	MTU0.TGRD = 46875;//コンペアマッチでLOW(cycle)
+	MTU0.TGRC = MAXTCNT;//コンペアマッチでHIGH(duty)
+	MTU0.TGRD = MAXTCNT;//コンペアマッチでLOW(cycle)
 	MTU.TRWER.BIT.RWE = 0x0;//プロテクト設定
 	
 	ICU.IER[0x12].BIT.IEN0 = 1;
